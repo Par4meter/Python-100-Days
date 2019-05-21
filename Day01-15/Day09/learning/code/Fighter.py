@@ -40,6 +40,9 @@ class Fighter(object, metaclass=ABCMeta):
         """
         pass
 
+    def is_alive(self):
+        return self.hp > 0
+
 
 class Avenger(Fighter):
     """复仇者"""
@@ -58,7 +61,9 @@ class Avenger(Fighter):
         self._mp = mp
 
     def attack(self, target):
-        target.hp -= randint(10, 30)
+        injure = randint(10, 30)
+        target.hp -= injure
+        print(self._name, '攻击->', target.name, '造成：', injure, '伤害')
 
     def execute_attack(self, target):
         """
@@ -94,15 +99,42 @@ class Avenger(Fighter):
                + '魔法值:%d\n' % self._mp
 
 
+class Monster(Fighter):
+    __slots__ = ('_name', '_hp')
+
+    def __init__(self, name, hp):
+        self._name = name
+        self._hp = hp
+
+    def attack(self, target):
+        target.hp -= randint(1, 10)
+
+    def __str__(self):
+        return '~~~怪兽-%s\n' % self._name \
+               + '生命值：%d\n' % self.hp
+
+
+def team_fight(avengers, monsters):
+    for i in range(0, len(avengers)):
+        avenger = avengers[randint(0, len(avengers) - 1)]
+        monster = monsters[randint(0, len(monsters) - 1)]
+        avenger.attack(monster)
+
+
 def main():
-    a = Avenger('钢铁侠', 100, 100)
-    print(a)
+    avengers = [
+        Avenger('钢铁侠', 100, 100),
+        Avenger('蜘蛛侠', 100, 50),
+        Avenger('黑寡妇', 50, 50)
+    ]
 
-    a1 = Avenger('蜘蛛侠', 50, 50)
+    monsters = [
+        Monster('兽人1', 100),
+        Monster('兽人2', 100),
+        Monster('兽人3', 100)
+    ]
 
-    a.attack(a1)
-
-    print(a1)
+    team_fight(avengers, monsters)
 
 
 if __name__ == '__main__':
